@@ -84,11 +84,17 @@ void readToSerial(StringData* filename) {
     initFileSystem();
     ManagedString fn(filename);
     MicroBitFile f(fn);
-    char buf[5];
+    char buf[32];
     int read = 0;
+    if ( !f.isValid())
+    {
+        uBit.serial.send("cannot open data file ");
+        uBit.serial.send( fn);
+        uBit.serial.send( "\n");
+        return;
+    }
     while((read = f.read(buf, sizeof(buf) * sizeof(char))) > 0) {
          uBit.serial.send((uint8_t*)buf, read * sizeof(char), SYNC_SPINWAIT);
-         uBit.sleep(20);
     }   
     f.close();    
 }
